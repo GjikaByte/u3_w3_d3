@@ -1,40 +1,36 @@
 import { Card, Badge, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { isFavourite, toggleFavourite } from '../store/favouritesSlice.js';
-
-function pick(obj, ...keys) {
-  const o = {};
-  keys.forEach(k => { if (obj?.[k] != null) o[k] = obj[k]; });
-  return o;
-}
+import { toggleFavourite } from '../redux/actions/favourites.js';
 
 export default function JobItem({ job }) {
-  // API campi comuni
-  const { title, company_name, candidate_required_location, category, job_type, url, publication_date } =
-    pick(job, 'title', 'company_name', 'candidate_required_location', 'category', 'job_type', 'url', 'publication_date');
-
   const dispatch = useDispatch();
-  const fav = useSelector((state) => isFavourite(state, company_name));
+  const favs = useSelector(s => s.favourites.companies);
+  const isFav = favs.includes(job.company_name);
 
   return (
-    <Card className="shadow-sm">
-      <Card.Body className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+    <Card className="mb-2 shadow-sm">
+      <Card.Body className="d-flex justify-content-between align-items-start gap-3">
         <div className="flex-grow-1">
-          <Card.Title as="h5" className="mb-1">{title}</Card.Title>
+          <Card.Title as="h5" className="mb-1">{job.title}</Card.Title>
 
-          <div className="d-flex flex-wrap gap-2 align-items-center">
-            <Link to={`/company/${encodeURIComponent(company_name)}`} className="text-decoration-none">
-              <Badge bg="secondary">{company_name}</Badge>
+          <div className="d-flex align-items-center gap-2 flex-wrap">
+            <Link to={`/company/${encodeURIComponent(job.company_name)}`} className="text-decoration-none">
+              <Badge bg="secondary">{job.company_name}</Badge>
             </Link>
-            {candidate_required_location && <Badge bg="info" text="dark">{candidate_required_location}</Badge>}
-            {(category || job_type) && <Badge bg="dark">{category || job_type}</Badge>}
-            {publication_date && <small className="text-muted ms-2">{new Date(publication_date).toLocaleDateString()}</small>}
+            {job.candidate_required_location && (
+              <Badge bg="info" text="dark">{job.candidate_required_location}</Badge>
+            )}
+            {job.publication_date && (
+              <small className="text-muted ms-2">
+                {new Date(job.publication_date).toLocaleDateString()}
+              </small>
+            )}
           </div>
 
-          {url && (
+          {job.url && (
             <div className="mt-2">
-              <a href={url} target="_blank" rel="noreferrer" className="btn btn-sm btn-outline-primary">
+              <a href={job.url} target="_blank" rel="noreferrer" className="btn btn-sm btn-outline-primary">
                 Vai all’annuncio
               </a>
             </div>
@@ -43,11 +39,11 @@ export default function JobItem({ job }) {
 
         <div className="text-nowrap">
           <Button
-            variant={fav ? 'success' : 'outline-success'}
-            onClick={() => dispatch(toggleFavourite(company_name))}
-            title={fav ? 'Già nei preferiti' : 'Aggiungi ai preferiti'}
+            className={isFav ? 'btn btn-success' : 'btn btn-outline-success'}
+            onClick={() => dispatch(toggleFavourite(job.company_name))}
+            title={isFav ? 'Già nei preferiti' : 'Aggiungi ai preferiti'}
           >
-            {fav ? '★ Preferita' : '☆ Preferisci'}
+            {isFav ? '★ Preferita' : '☆ Preferisci'}
           </Button>
         </div>
       </Card.Body>

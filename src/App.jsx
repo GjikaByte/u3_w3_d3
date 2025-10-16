@@ -1,8 +1,9 @@
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import { Routes, Route, Link } from 'react-router-dom';
+
 import Home from './pages/Home.jsx';
 import CompanyPage from './pages/CompanyPage.jsx';
-import FavouritesPage from './pages/favouritesPage.jsx';
+import FavouritesPage from './pages/FavouritesPage.jsx';
 
 export default function App() {
   return (
@@ -10,11 +11,12 @@ export default function App() {
       <Navbar bg="dark" variant="dark" expand="lg">
         <Container>
           <Navbar.Brand as={Link} to="/">Remote Jobs</Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
+          <Navbar.Toggle />
+          <Navbar.Collapse>
             <Nav className="ms-auto">
               <Nav.Link as={Link} to="/">Home</Nav.Link>
               <Nav.Link as={Link} to="/favourites">Favourites</Nav.Link>
+              {/* add more links if needed */}
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -25,6 +27,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/company/:company" element={<CompanyPage />} />
           <Route path="/favourites" element={<FavouritesPage />} />
+          <Route path="*" element={<div className="text-muted">Not found</div>} />
         </Routes>
       </Container>
     </>

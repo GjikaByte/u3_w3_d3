@@ -1,21 +1,20 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { selectFavourites, removeFavourite } from '../store/favouritesSlice.js';
 import { ListGroup, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { removeFavourite } from '../redux/actions/favourites.js';
 
 export default function FavouritesPage() {
-  const companies = useSelector(selectFavourites);
+  const companies = useSelector(s => s.favourites.companies);
   const dispatch = useDispatch();
 
   return (
     <>
-      <h2 className="h4 mb-3">Aziende preferite</h2>
-
+      <h2 className="h4 mb-3">Preferiti</h2>
       {companies.length === 0 ? (
         <p className="text-muted">Nessuna azienda nei preferiti.</p>
       ) : (
         <ListGroup>
-          {companies.map((name) => (
+          {companies.map(name => (
             <ListGroup.Item key={name} className="d-flex justify-content-between align-items-center">
               <Link to={`/company/${encodeURIComponent(name)}`} className="text-decoration-none">{name}</Link>
               <Button size="sm" variant="outline-danger" onClick={() => dispatch(removeFavourite(name))}>
